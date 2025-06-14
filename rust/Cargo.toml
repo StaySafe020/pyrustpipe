@@ -1,0 +1,11 @@
+[package]
+name = "pyrustpipe"  # This should match your Python module name
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "pyrustpipe"  # Must match #[pymodule] function name
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.20.0", features = ["extension-module"] }
