@@ -10,5 +10,5 @@ dependencies = ["maturin>=0.14"]
 requires = ["maturin>=0.14"]
 build-backend = "maturin"
 
-[tool.pytest]
-testpaths = ["tests"]
+#[tool.pytest]
+#testpaths = ["tests"]

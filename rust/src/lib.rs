@@ -89,7 +89,8 @@ fn validate(schema_json: String, data_json: String) -> PyResult<Vec<Vec<Validati
 }
 
 #[pymodule]
-fn pyrustpipe(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
+#[pyo3(name = "_pyrustpipe")]  // Force Python module name
+fn pyrustpipe_native(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<ValidationError>()?;
     m.add_function(wrap_pyfunction!(validate, m)?)?;
     Ok(())
