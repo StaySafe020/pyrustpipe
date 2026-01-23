@@ -1,0 +1,9 @@
+name,email,age,balance
+John Doe,john@example.com,25,1000.50
+Jane Smith,jane@example.com,32,2500.75
+Bob Wilson,bob@example.com,45,5000.00
+Alice Brown,alice@example.com,28,3200.25
+Charlie Davis,charlie@example.com,19,150.00
+Invalid User,not-an-email,150,1000.00
+Young User,young@example.com,15,500.00
+Negative Balance,negative@example.com,30,-100.00

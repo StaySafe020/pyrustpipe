@@ -1,0 +1,84 @@
+[build-system]
+requires = ["maturin>=1.4,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "pyrustpipe"
+version = "0.1.0"
+description = "Fast data validation with Python DSL and Rust backend"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+keywords = ["data-validation", "rust", "performance", "etl", "data-quality"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Rust",
+    "Topic :: Software Development :: Libraries",
+]
+
+dependencies = [
+    "boto3>=1.34.0",
+    "click>=8.1.0",
+    "pydantic>=2.0.0",
+    "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+    "maturin>=1.4.0",
+]
+web = [
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "jinja2>=3.1.0",
+]
+
+[project.scripts]
+pyrustpipe = "pyrustpipe.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/pyrustpipe"
+Repository = "https://github.com/yourusername/pyrustpipe"
+Issues = "https://github.com/yourusername/pyrustpipe/issues"
+
+[tool.maturin]
+python-source = "python"
+module-name = "pyrustpipe._core"
+features = ["pyo3/extension-module"]
+
+[tool.black]
+line-length = 100
+target-version = ["py38", "py39", "py310", "py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --cov=pyrustpipe --cov-report=html --cov-report=term"
