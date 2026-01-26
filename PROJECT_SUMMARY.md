@@ -356,13 +356,13 @@ pyrustpipe is a developer tool that enhances data processing workflows.
 
 ## 📞 Contact & Links
 
-- **Repository**: https://github.com/[yourusername]/pyrustpipe
+- **Repository**: https://github.com/[staysafe020]/pyrustpipe
 - **Demo Video**: [TO BE ADDED]
 - **Team**: [YOUR TEAM NAME]
-- **Email**: [your.email@example.com]
+- **Email**: [jambongralpher@gmail.com]
 - **Hackathon**: Rust Africa 2026
 - **Track**: AI & Developer Tools
-- **License**: MIT
+- **License**: APACHE
 
 ---
 

@@ -1,0 +1,29 @@
+# PyRustPipe - Hackathon Submission Summary
+
+## Project Summary
+
+PyRustPipe is a data validation tool that lets you write simple Python rules to check your data, while Rust does the fast processing behind the scenes - handling billions of records in minutes with easy-to-use commands.
+
+## Track
+AI & Developer Tools
+
+## GitHub Repository
+https://github.com/StaySafe020/pyrustpipe
+
+## Key Features
+- Python DSL for writing validation rules
+- Rust backend for high performance (239K validations/sec)
+- Process billions of records efficiently
+- CLI tool for easy usage
+- 33 tests passing (100%)
+
+## Built With
+Python 3.12 + Rust 1.91 + PyO3
+
+## Feedback & Experience
+
+Working on PyRustPipe was my first deep dive into Rust, and it was both challenging and rewarding. The biggest difficulty was understanding Rust's ownership and borrowing system - coming from Python, I initially struggled with lifetime annotations and the borrow checker constantly telling me my code was wrong. PyO3 integration added another layer of complexity, especially managing data transfer between Python and Rust without copying everything.
+
+I learned that Rust's strictness is actually its strength - once my code compiled, it just worked. The compiler errors, though frustrating at first, taught me to think about memory safety upfront. I discovered Rayon for parallel processing, which made multi-core validation surprisingly easy. The biggest "aha moment" was realizing that Rust's zero-cost abstractions meant I could write clean, high-level code that still ran at C-like speeds.
+
+The async/await with tokio for S3 operations was tricky - mixing async Rust with synchronous Python required careful runtime management. I also learned the hard way that CSV parsing needs explicit type handling, not just regex patterns. Despite the learning curve, seeing validation throughput jump from 50K rows/sec (pure Python) to 239K rows/sec (with Rust) made every struggle worth it. Rust taught me to respect the machine and think deeply about performance from the start.

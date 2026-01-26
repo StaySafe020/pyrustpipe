@@ -10,7 +10,7 @@ This guide shows you how to use pyrustpipe to validate large datasets, from thou
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/pyrustpipe.git
+git clone REPO LINK
 cd pyrustpipe
 
 # Install dependencies
@@ -611,4 +611,4 @@ python -c "from pyrustpipe import Validator, Schema, Field; \
 
 ---
 
-**Ready to process billions of records?** Pick the method that fits your needs and start validating! 🚀
+**Ready to process billions of records?** Pick the method that fits your needs and start validating! 

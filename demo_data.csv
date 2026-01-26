@@ -1,0 +1,5 @@
+id,email,age,balance
+1,john@example.com,25,1000.50
+2,jane@example.com,30,2500.75
+3,invalid-email,15,500.00
+4,bob@test.com,150,9999.99
