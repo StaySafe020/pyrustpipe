@@ -132,7 +132,7 @@ pyrustpipe validate --rules rules.py --s3 s3://bucket/data.csv --parallel 8
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/pyrustpipe.git
+git clone https://github.com/staysafe020/pyrustpipe.git
 cd pyrustpipe
 
 # Create virtual environment
@@ -193,12 +193,5 @@ MIT License - see [LICENSE](LICENSE) for details
 
 Contributions welcome! This is a hackathon project, but we plan to maintain it.
 
-## 🌍 Team
 
-Built with ❤️ by [Your Team Name] for Rust Africa Hackathon 2026
 
----
-
-**Track**: AI & Developer Tools  
-**Hackathon**: Rust Africa 2026  
-**Submission Date**: January 2026
