@@ -20,6 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake pkg-config libssl-dev
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -49,10 +54,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install maturin pytest pytest-cov boto3
-          pip install -e ".[dev]"
 
       - name: Build Rust extension
         run: maturin develop --release
+
+      - name: Install package
+        run: pip install -e "."
 
       - name: Run tests with coverage
         run: pytest tests/ -v --cov=python/pyrustpipe --cov-report=xml --cov-report=term
@@ -69,6 +76,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake pkg-config libssl-dev
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
