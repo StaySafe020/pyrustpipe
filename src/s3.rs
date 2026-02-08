@@ -1,4 +1,4 @@
-use crate::types::{ValidationResult, ValidationRule};
+use crate::types::ValidationResult;
 use crate::validator::ValidationEngine;
 use anyhow::{Context, Result};
 use aws_config::meta::region::RegionProviderChain;
@@ -16,12 +16,16 @@ impl ValidationEngine {
     ) -> Result<ValidationResult> {
         // Initialize AWS SDK
         let region_provider = RegionProviderChain::default_provider().or_else("us-east-1");
-        let config = aws_config::from_env().region(region_provider).load().await;
+        let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
+            .region(region_provider)
+            .load()
+            .await;
         let client = Client::new(&config);
 
         // Download file from S3 to temporary location
         let temp_path = format!("/tmp/pyrustpipe_{}", key.replace('/', "_"));
-        self.download_from_s3(&client, bucket, key, &temp_path).await?;
+        self.download_from_s3(&client, bucket, key, &temp_path)
+            .await?;
 
         // Validate the downloaded file
         let result = self.validate_csv(&temp_path, chunk_size)?;
@@ -48,8 +52,8 @@ impl ValidationEngine {
             .await
             .context("Failed to get object from S3")?;
 
-        let mut file = std::fs::File::create(dest_path)
-            .context("Failed to create temporary file")?;
+        let mut file =
+            std::fs::File::create(dest_path).context("Failed to create temporary file")?;
 
         let mut body = response.body.into_async_read();
         let mut buffer = vec![0; 8192];
@@ -66,13 +70,17 @@ impl ValidationEngine {
     }
 
     /// Upload validation results to S3
+    #[allow(dead_code)]
     pub async fn upload_results_to_s3(
         bucket: &str,
         key: &str,
         results: &ValidationResult,
     ) -> Result<()> {
         let region_provider = RegionProviderChain::default_provider().or_else("us-east-1");
-        let config = aws_config::from_env().region(region_provider).load().await;
+        let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
+            .region(region_provider)
+            .load()
+            .await;
         let client = Client::new(&config);
 
         // Serialize results to JSON
@@ -101,7 +109,10 @@ mod tests {
     async fn test_s3_client_creation() {
         // Basic test to ensure S3 client can be created
         let region_provider = RegionProviderChain::default_provider().or_else("us-east-1");
-        let config = aws_config::from_env().region(region_provider).load().await;
+        let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
+            .region(region_provider)
+            .load()
+            .await;
         let _client = Client::new(&config);
         // Test passes if we can create a client
     }

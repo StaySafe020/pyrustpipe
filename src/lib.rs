@@ -1,15 +1,13 @@
-use pyo3::prelude::*;
-use pyo3::types::{PyDict, PyList};
-use rayon::prelude::*;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+#![allow(non_local_definitions)]
 
-mod validator;
+use pyo3::prelude::*;
+
 mod s3;
 mod types;
+mod validator;
 
+use types::{ValidationResult, ValidationRule};
 use validator::ValidationEngine;
-use types::{ValidationResult, ValidationRule, RowData};
 
 /// Python module initialization
 #[pymodule]
@@ -47,7 +45,8 @@ impl RustValidator {
     /// Validate CSV file
     fn validate_csv(&self, path: String, chunk_size: usize) -> PyResult<ValidationResult> {
         let engine = ValidationEngine::new(self.rules.clone(), self.parallel);
-        engine.validate_csv(&path, chunk_size)
+        engine
+            .validate_csv(&path, chunk_size)
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))
     }
 
@@ -59,30 +58,19 @@ impl RustValidator {
         chunk_size: usize,
     ) -> PyResult<ValidationResult> {
         let engine = ValidationEngine::new(self.rules.clone(), self.parallel);
-        
+
         // Run async S3 validation in blocking context
         let runtime = tokio::runtime::Runtime::new()
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))?;
-        
-        runtime.block_on(async {
-            engine.validate_s3(&bucket, &key, chunk_size).await
-        })
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))
-    }
-}
 
-impl RustValidator {
-    fn validate_row_internal(&self, _row: &PyObject) -> ValidationResult {
-        // Internal validation logic
-        // This will apply rules to individual rows
-        ValidationResult::default()
+        runtime
+            .block_on(async { engine.validate_s3(&bucket, &key, chunk_size).await })
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn test_basic_validation() {
         // Basic test to ensure compilation

@@ -1,4 +1,4 @@
-use crate::types::{ValidationError, ValidationResult, ValidationRule, RowData};
+use crate::types::{RowData, ValidationError, ValidationResult, ValidationRule};
 use anyhow::{Context, Result};
 use csv::ReaderBuilder;
 use rayon::prelude::*;
@@ -18,9 +18,7 @@ impl ValidationEngine {
     /// Validate CSV file with chunked processing
     pub fn validate_csv(&self, path: &str, chunk_size: usize) -> Result<ValidationResult> {
         let file = File::open(path).context("Failed to open CSV file")?;
-        let mut reader = ReaderBuilder::new()
-            .has_headers(true)
-            .from_reader(file);
+        let mut reader = ReaderBuilder::new().has_headers(true).from_reader(file);
 
         let headers: Vec<String> = reader
             .headers()
@@ -31,12 +29,11 @@ impl ValidationEngine {
 
         let mut result = ValidationResult::default();
         let mut rows: Vec<RowData> = Vec::new();
-        let mut row_index = 0;
 
         // Read and validate in chunks
-        for record in reader.records() {
+        for (row_index, record) in reader.records().enumerate() {
             let record = record.context("Failed to read CSV record")?;
-            
+
             let mut row_data = HashMap::new();
             for (i, field) in record.iter().enumerate() {
                 if i < headers.len() {
@@ -51,8 +48,6 @@ impl ValidationEngine {
                 index: row_index,
                 data: row_data,
             });
-
-            row_index += 1;
 
             // Process chunk when full
             if rows.len() >= chunk_size {
@@ -74,28 +69,30 @@ impl ValidationEngine {
     /// Validate a chunk of rows
     fn validate_chunk(&self, rows: &[RowData]) -> ValidationResult {
         let errors: Vec<Vec<ValidationError>> = if self.parallel {
-            rows.par_iter()
-                .map(|row| self.validate_row(row))
-                .collect()
+            rows.par_iter().map(|row| self.validate_row(row)).collect()
         } else {
-            rows.iter()
-                .map(|row| self.validate_row(row))
-                .collect()
+            rows.iter().map(|row| self.validate_row(row)).collect()
         };
 
-        let mut result = ValidationResult::default();
-        result.total_rows = rows.len();
+        let mut total_valid = 0;
+        let mut total_invalid = 0;
+        let mut all_errors = Vec::new();
 
         for row_errors in errors {
             if row_errors.is_empty() {
-                result.valid_count += 1;
+                total_valid += 1;
             } else {
-                result.invalid_count += 1;
-                result.errors.extend(row_errors);
+                total_invalid += 1;
+                all_errors.extend(row_errors);
             }
         }
 
-        result
+        ValidationResult {
+            valid_count: total_valid,
+            invalid_count: total_invalid,
+            total_rows: rows.len(),
+            errors: all_errors,
+        }
     }
 
     /// Validate a single row against all rules
