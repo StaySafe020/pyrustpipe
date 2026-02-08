@@ -3,6 +3,9 @@
 **Fast data validation with Python DSL and Rust backend**
 
 [![Rust Africa Hackathon 2026](https://img.shields.io/badge/Rust%20Africa-Hackathon%202026-orange)](https://rustafrica.org)
+[![CI](https://github.com/StaySafe020/pyrustpipe/actions/workflows/ci.yml/badge.svg)](https://github.com/StaySafe020/pyrustpipe/actions/workflows/ci.yml)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 ## 🚀 Overview
 

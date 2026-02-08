@@ -69,6 +69,7 @@ Result types forced explicit error handling, making the code more robust.
 1. **Learning curve** - First time writing production Rust
 2. **PyO3 debugging** - Error messages across FFI boundaries were tricky
 3. **Integration complexity** - Making Python and Rust work seamlessly together required careful design of data structures and type conversions
+4. **S3 streaming** - Implementing memory-efficient S3 streaming with parallel validation
 
 ---
 

@@ -238,19 +238,16 @@ class S3DistributedValidator:
         Returns:
             Aggregated ValidationResult
         """
-        try:
-            import boto3
-        except ImportError:
-            raise ImportError(
-                "boto3 required for S3 support. Install with: pip install boto3"
-            )
+        # Use the S3Validator for actual implementation
+        from .s3 import S3Validator
         
-        # This is a high-level interface; actual implementation
-        # would download and validate chunks in parallel
-        raise NotImplementedError(
-            "S3 distributed validation requires boto3 async support. "
-            "Use validate_csv_parallel with local download first."
+        s3_validator = S3Validator(
+            schema=self.schema,
+            workers=self.workers,
+            chunk_size=self.chunk_size
         )
+        
+        return s3_validator.validate(bucket=bucket, key=key, callback=callback)
 
 
 class MapReduceValidator:

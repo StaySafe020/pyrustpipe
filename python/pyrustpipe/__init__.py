@@ -11,6 +11,7 @@ from .types import ValidationResult, ValidationError
 from .streaming import StreamingValidator, LineProcessor
 from .distributed import DistributedValidator, S3DistributedValidator, MapReduceValidator
 from .caching import ValidationCache, CachedValidator
+from .s3 import S3Validator, validate_s3
 
 __all__ = [
     "Validator",
@@ -27,4 +28,6 @@ __all__ = [
     "MapReduceValidator",
     "ValidationCache",
     "CachedValidator",
+    "S3Validator",
+    "validate_s3",
 ]
