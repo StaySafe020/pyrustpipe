@@ -1,7 +1,7 @@
-"""Python type definitions and wrappers for Rust types"""
+"""Python type definitions for validation results"""
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List
 
 
 @dataclass
@@ -65,40 +65,22 @@ class ValidationResult:
             f"ValidationResult(valid={self.valid_count}, invalid={self.invalid_count}, "
             f"total={self.total_rows}, success_rate={self.success_rate():.2f}%)"
         )
-
-
-# Try to import Rust types, fall back to Python versions
-try:
-    from pyrustpipe._core import ValidationResult as RustValidationResult
-    from pyrustpipe._core import ValidationError as RustValidationError
     
-    # Wrap Rust types for additional Python functionality
-    class ValidationResultWrapper(RustValidationResult):
-        """Wrapper that adds Python methods to Rust ValidationResult"""
-        
-        def is_valid(self) -> bool:
-            return self.invalid_count == 0
-        
-        def get_errors_by_field(self, field: str) -> List:
-            return [e for e in self.errors if e.field == field]
-        
-        def get_errors_by_rule(self, rule: str) -> List:
-            return [e for e in self.errors if e.rule == rule]
-        
-        def summary(self) -> str:
-            return (
-                f"Validation Summary:\n"
-                f"  Total Rows: {self.total_rows}\n"
-                f"  Valid: {self.valid_count}\n"
-                f"  Invalid: {self.invalid_count}\n"
-                f"  Success Rate: {self.success_rate():.2f}%\n"
-                f"  Total Errors: {len(self.errors())}"
+    @classmethod
+    def from_rust(cls, rust_result) -> "ValidationResult":
+        """Convert Rust ValidationResult to Python ValidationResult"""
+        errors = [
+            ValidationError(
+                row_index=e.row_index,
+                field=e.field,
+                rule=e.rule,
+                message=e.message
             )
-    
-    # Use Rust types when available
-    ValidationResult = ValidationResultWrapper
-    ValidationError = RustValidationError
-    
-except ImportError:
-    # Fall back to pure Python types defined above
-    pass
+            for e in rust_result.errors
+        ]
+        return cls(
+            valid_count=rust_result.valid_count,
+            invalid_count=rust_result.invalid_count,
+            total_rows=rust_result.total_rows,
+            errors=errors
+        )

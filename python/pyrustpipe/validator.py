@@ -88,7 +88,8 @@ class Validator:
         """
         path = str(path)
         validator = self._get_rust_validator()
-        result = validator.validate_csv(path, self.chunk_size)
+        rust_result = validator.validate_csv(path, self.chunk_size)
+        result = ValidationResult.from_rust(rust_result)
         
         if output_path:
             self._save_results(result, output_path)
@@ -115,19 +116,20 @@ class Validator:
             ValidationResult object
         """
         validator = self._get_rust_validator()
-        result = validator.validate_s3(bucket, key, self.chunk_size)
+        rust_result = validator.validate_s3(bucket, key, self.chunk_size)
+        result = ValidationResult.from_rust(rust_result)
         
         if output_bucket and output_key:
             # Upload results to S3
             from pyrustpipe._core import upload_results_to_s3
             import asyncio
-            asyncio.run(upload_results_to_s3(output_bucket, output_key, result))
+            asyncio.run(upload_results_to_s3(output_bucket, output_key, rust_result))
         
         return result
     
     def validate_dict(self, data: Dict[str, Any]) -> List[str]:
         """
-        Validate a single dictionary (Python-only, no Rust)
+        Validate a single dictionary using Rust engine
         
         Args:
             data: Dictionary to validate
@@ -137,11 +139,17 @@ class Validator:
         """
         errors = []
         
-        # Schema validation
+        # Use Rust engine for schema validation
         if self.schema:
-            errors.extend(self.schema.validate_dict(data))
+            try:
+                validator = self._get_rust_validator()
+                rust_errors = validator.validate_dict(data)
+                errors.extend(rust_errors)
+            except Exception:
+                # Fallback to Python validation if Rust fails
+                errors.extend(self.schema.validate_dict(data))
         
-        # Custom rule validation
+        # Custom rule validation (Python callbacks)
         if self.rules:
             class DictRow:
                 def __init__(self, d):

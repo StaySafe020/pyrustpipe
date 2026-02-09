@@ -95,6 +95,11 @@ impl ValidationEngine {
         }
     }
 
+    /// Validate a single row and return errors (public interface for Python)
+    pub fn validate_single_row(&self, row: &RowData) -> Vec<ValidationError> {
+        self.validate_row(row)
+    }
+
     /// Validate a single row against all rules
     fn validate_row(&self, row: &RowData) -> Vec<ValidationError> {
         let mut errors = Vec::new();
@@ -114,7 +119,13 @@ impl ValidationEngine {
 
         match &rule.rule_type {
             crate::types::RuleType::Required => {
-                if field_value.is_none() || field_value == Some(&serde_json::Value::Null) {
+                let is_missing = match field_value {
+                    None => true,
+                    Some(serde_json::Value::Null) => true,
+                    Some(serde_json::Value::String(s)) if s.trim().is_empty() => true,
+                    _ => false,
+                };
+                if is_missing {
                     return Some(ValidationError {
                         row_index: row.index,
                         field: rule.field.clone(),
@@ -141,7 +152,12 @@ impl ValidationEngine {
             crate::types::RuleType::Range => {
                 // Range validation logic
                 if let Some(value) = field_value {
-                    if let Some(num) = value.as_f64() {
+                    // Try to get numeric value (either directly or by parsing string)
+                    let num = value.as_f64().or_else(|| {
+                        value.as_str().and_then(|s| s.parse::<f64>().ok())
+                    });
+
+                    if let Some(num) = num {
                         if let Some(min) = rule.params.get("min").and_then(|v| v.as_f64()) {
                             if num < min {
                                 return Some(ValidationError {
@@ -222,9 +238,39 @@ impl ValidationEngine {
     fn check_type(&self, value: &serde_json::Value, expected_type: &str) -> bool {
         match expected_type {
             "string" => value.is_string(),
-            "number" | "float" => value.is_number(),
-            "integer" | "int" => value.is_i64() || value.is_u64(),
-            "boolean" | "bool" => value.is_boolean(),
+            "number" | "float" => {
+                if value.is_number() {
+                    return true;
+                }
+                // Try parsing string as number
+                if let Some(s) = value.as_str() {
+                    s.parse::<f64>().is_ok()
+                } else {
+                    false
+                }
+            }
+            "integer" | "int" => {
+                if value.is_i64() || value.is_u64() {
+                    return true;
+                }
+                // Try parsing string as integer
+                if let Some(s) = value.as_str() {
+                    s.parse::<i64>().is_ok()
+                } else {
+                    false
+                }
+            }
+            "boolean" | "bool" => {
+                if value.is_boolean() {
+                    return true;
+                }
+                // Try parsing string as boolean
+                if let Some(s) = value.as_str() {
+                    matches!(s.to_lowercase().as_str(), "true" | "false" | "1" | "0")
+                } else {
+                    false
+                }
+            }
             "null" => value.is_null(),
             _ => true,
         }
