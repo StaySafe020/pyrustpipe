@@ -153,9 +153,9 @@ impl ValidationEngine {
                 // Range validation logic
                 if let Some(value) = field_value {
                     // Try to get numeric value (either directly or by parsing string)
-                    let num = value.as_f64().or_else(|| {
-                        value.as_str().and_then(|s| s.parse::<f64>().ok())
-                    });
+                    let num = value
+                        .as_f64()
+                        .or_else(|| value.as_str().and_then(|s| s.parse::<f64>().ok()));
 
                     if let Some(num) = num {
                         if let Some(min) = rule.params.get("min").and_then(|v| v.as_f64()) {
