@@ -63,7 +63,9 @@ jobs:
           maturin develop --release
 
       - name: Run tests
-        run: pytest tests/ -v
+        run: |
+          source .venv/bin/activate
+          pytest tests/ -v
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.11'
