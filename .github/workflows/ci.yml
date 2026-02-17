@@ -50,14 +50,12 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
 
-      - name: Install dependencies
 
-      - name: Set up Python venv
+      - name: Set up Python venv and install dependencies
         run: |
           python -m venv .venv
           source .venv/bin/activate
           pip install --upgrade pip setuptools wheel maturin pytest pytest-cov boto3
-
 
       - name: Build Rust extension
         run: |
@@ -72,6 +70,7 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   rust-check:
     name: Rust Checks
