@@ -23,7 +23,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@e7a5da770302256da234710f63bc05e714115167 # stable
+        uses: dtolnay/rust-toolchain@a54c08460670059e00947702213d2836f32e924a # stable
         with:
           toolchain: stable
 
@@ -65,7 +65,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Set up Rust
-        uses: dtolnay/rust-toolchain@e7a5da770302256da234710f63bc05e714115167 # stable
+        uses: dtolnay/rust-toolchain@a54c08460670059e00947702213d2836f32e924a # stable
 
       - name: Cache Rust dependencies
         uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
@@ -102,7 +102,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.11'
-        uses: codecov/codecov-action@13ce0d5d1da27728c35733965d0552aa27e45095 # v4.6.0
+        uses: codecov/codecov-action@b9fd7d16f6d7dca15eaa1c3aa96eb18474e03697 # v4.6.0
         with:
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -121,7 +121,7 @@ jobs:
           sudo apt-get install -y cmake pkg-config libssl-dev
 
       - name: Set up Rust
-        uses: dtolnay/rust-toolchain@e7a5da770302256da234710f63bc05e714115167 # stable
+        uses: dtolnay/rust-toolchain@a54c08460670059e00947702213d2836f32e924a # stable
         with:
           components: rustfmt, clippy
 
@@ -162,7 +162,7 @@ jobs:
           python-version: "3.11"
 
       - name: Build wheels
-        uses: PyO3/maturin-action@59e665977a41ec646e2978f88755670877a5610d # v1.48.0
+        uses: PyO3/maturin-action@fe40f562095f33333333878b408544e30491039f # v1.48.0
         with:
           args: --release --out dist
           manylinux: auto
