@@ -7,7 +7,7 @@ name = "pyrustpipe"
 version = "0.1.0"
 description = "Fast data validation with Python DSL and Rust backend"
 authors = [
-    { name = "Your Name", email = "your.email@example.com" }
+    { name = "StaySafe020" }
 ]
 readme = "README.md"
 requires-python = ">=3.8"
@@ -53,9 +53,9 @@ web = [
 pyrustpipe = "pyrustpipe.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/pyrustpipe"
-Repository = "https://github.com/yourusername/pyrustpipe"
-Issues = "https://github.com/yourusername/pyrustpipe/issues"
+Homepage = "https://github.com/StaySafe020/pyrustpipe"
+Repository = "https://github.com/StaySafe020/pyrustpipe"
+Issues = "https://github.com/StaySafe020/pyrustpipe/issues"
 
 [tool.maturin]
 python-source = "python"

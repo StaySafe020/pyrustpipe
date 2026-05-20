@@ -2,8 +2,12 @@
 name = "pyrustpipe"
 version = "0.1.0"
 edition = "2021"
-authors = ["Your Name <your.email@example.com>"]
+authors = ["StaySafe020"]
 description = "High-performance data validation with Rust backend"
+license = "MIT"
+repository = "https://github.com/StaySafe020/pyrustpipe"
+homepage = "https://github.com/StaySafe020/pyrustpipe"
+documentation = "https://github.com/StaySafe020/pyrustpipe#readme"
 
 [lib]
 name = "pyrustpipe_core"
